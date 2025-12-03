@@ -1,0 +1,236 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model amenities {
+  id                Int                 @id @default(autoincrement())
+  name              String
+  kind              String?
+  icon              String?
+  project_amenities project_amenities[]
+}
+
+model areas_barrios {
+  id        Int        @id @default(autoincrement())
+  market_id Int
+  name      String
+  markets   markets    @relation(fields: [market_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  projects  projects[]
+}
+
+model featured_projects {
+  id         Int       @id @default(autoincrement())
+  market_id  Int
+  project_id Int
+  position   Int
+  created_at DateTime? @default(now()) @db.Timestamp(6)
+  markets    markets   @relation(fields: [market_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  projects   projects  @relation(fields: [project_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model leads {
+  id                Int                @id @default(autoincrement())
+  project_id        Int?
+  user_id           String?  // Changed to String to match Better Auth User.id
+  full_name         String
+  email             String
+  chat_transcript   String?
+  phone_number     String?
+  budget_usd_min    Int?
+  budget_usd_max    Int?
+  preferred_area    String?
+  projects          projects?          @relation(fields: [project_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  marketplace_users Marketplace_users? @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+// REMOVED: marketplace_sessions - Better Auth uses Session model instead
+
+// REMOVED: marketplace_users - Better Auth uses Marketplace_users model instead
+
+model markets {
+  id                Int                 @id @default(autoincrement())
+  code              String
+  name              String
+  country           String
+  created_at        DateTime?           @default(now()) @db.Timestamp(6)
+  areas_barrios     areas_barrios[]
+  featured_projects featured_projects[]
+  projects          projects[]
+}
+
+model owner_sessions {
+  token      String    @id
+  owner_id   Int
+  expires_at DateTime  @db.Timestamp(6)
+  created_at DateTime? @default(now()) @db.Timestamp(6)
+  owners     owners    @relation(fields: [owner_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model owners {
+  id                                   Int              @id @default(autoincrement())
+  email                                String           @unique
+  password_hash                        String
+  display_name                         String?
+  role                                 String           @default("admin")
+  created_at                           DateTime?        @default(now()) @db.Timestamp(6)
+  last_login_at                        DateTime?        @db.Timestamp(6)
+  owner_sessions                       owner_sessions[]
+  projects_projects_created_byToowners projects[]       @relation("projects_created_byToowners")
+  projects_projects_updated_byToowners projects[]       @relation("projects_updated_byToowners")
+}
+
+model project_amenities {
+  project_id Int
+  amenity_id Int
+  amenities  amenities @relation(fields: [amenity_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  projects   projects  @relation(fields: [project_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@id([project_id, amenity_id])
+}
+
+model project_media {
+  id         Int       @id @default(autoincrement())
+  project_id Int
+  kind       String?
+  title      String?
+  alt        String?
+  s3_bucket  String?
+  s3_key     String?
+  width      Int?
+  height     Int?
+  sort_order Int?      @default(0)
+  created_at DateTime? @default(now()) @db.Timestamp(6)
+  projects   projects  @relation(fields: [project_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model project_tags {
+  project_id Int
+  tag_id     Int
+  projects   projects @relation(fields: [project_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  tags       tags     @relation(fields: [tag_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@id([project_id, tag_id])
+}
+
+model projects {
+  id                                 Int                      @id @default(autoincrement())
+  url                                String?                  @unique
+  title                              String
+  market_id                          Int
+  area_id                            Int
+  status                             String?
+  price_usd                          Int?
+  property_type                      String?
+  delivery_date                      String?
+  latitude                           Int?
+  longitude                          Int?
+  address                            String?
+  short_description                  String?
+  description_md                     String?
+  is_published                       Boolean?                 @default(false)
+  published_at                       DateTime?                @db.Timestamp(6)
+  created_by                         Int?
+  updated_by                         Int?
+  created_at                         DateTime?                @default(now()) @db.Timestamp(6)
+  updated_at                         DateTime?                @default(now()) @db.Timestamp(6)
+  drive_dropbox_url                  String?
+  featured_projects                  featured_projects[]
+  leads                              leads[]
+  project_amenities                  project_amenities[]
+  project_media                      project_media[]
+  project_tags                       project_tags[]
+  areas_barrios                      areas_barrios            @relation(fields: [area_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  owners_projects_created_byToowners owners?                  @relation("projects_created_byToowners", fields: [created_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  markets                            markets                  @relation(fields: [market_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  owners_projects_updated_byToowners owners?                  @relation("projects_updated_byToowners", fields: [updated_by], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  user_favorite_projects             user_favorite_projects[]
+}
+
+model tags {
+  id           Int            @id @default(autoincrement())
+  name         String
+  project_tags project_tags[]
+}
+
+model user_favorite_projects {
+  user_id           String  // Changed to String to match Better Auth User.id
+  project_id        Int
+  created_at        DateTime?         @default(now()) @db.Timestamp(6)
+  projects          projects          @relation(fields: [project_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  marketplace_users Marketplace_users @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@id([user_id, project_id])
+}
+
+// Better Auth Models
+model Marketplace_users {
+  id            String    @id
+  name          String
+  email         String
+  emailVerified Boolean   @default(false)
+  image         String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  role          String?   @default("user")
+  phone_number  String?
+  sessions      Session[]
+  accounts      Account[]
+  leads         leads[]
+  user_favorite_projects user_favorite_projects[]
+
+  @@unique([email])
+  @@map("marketplace_users")
+}
+
+model Session {
+  id                String            @id
+  expiresAt         DateTime
+  token             String
+  createdAt         DateTime          @default(now())
+  updatedAt         DateTime          @updatedAt
+  ipAddress         String?
+  userAgent         String?
+  userId            String
+  marketplace_users Marketplace_users @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([token])
+  @@index([userId])
+  @@map("session")
+}
+
+model Account {
+  id                    String            @id
+  accountId             String
+  providerId            String
+  userId                String
+  marketplace_users     Marketplace_users @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accessToken           String?
+  refreshToken           String?
+  idToken               String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  password              String?
+  createdAt             DateTime          @default(now())
+  updatedAt             DateTime          @updatedAt
+
+  @@index([userId])
+  @@map("account")
+}
+
+model Verification {
+  id         String   @id
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([identifier])
+  @@map("verification")
+}
