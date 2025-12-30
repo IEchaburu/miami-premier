@@ -49,7 +49,7 @@ function Navbar ({ isAuthenticated }: NavbarProps) {
 						className='relative hidden h-9 w-9 items-center justify-center rounded-full border border-zinc-200 text-xs font-medium text-zinc-700 md:inline-flex'
 					>
 						<span className='absolute -right-1 -top-1 inline-flex h-4 min-w-4 items-center justify-center rounded-full bg-zinc-900 px-1 text-[10px] font-semibold text-white'>
-							3
+							0
 						</span>
 						<span>♥</span>
 					</button>
