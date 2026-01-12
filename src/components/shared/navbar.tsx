@@ -1,3 +1,6 @@
+'use client'
+
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
 
 interface NavbarProps {
@@ -5,8 +8,45 @@ interface NavbarProps {
 }
 
 function Navbar ({ isAuthenticated }: NavbarProps) {
+	const [isVisible, setIsVisible] = useState(true)
+	const [lastScrollY, setLastScrollY] = useState(0)
+
+	useEffect(() => {
+		function handleScroll () {
+			const currentScrollY = window.scrollY
+
+			// Show navbar when at the top
+			if (currentScrollY < 10) {
+				setIsVisible(true)
+				setLastScrollY(currentScrollY)
+				return
+			}
+
+			// Hide when scrolling down, show when scrolling up
+			if (currentScrollY > lastScrollY) {
+				// Scrolling down
+				setIsVisible(false)
+			} else {
+				// Scrolling up
+				setIsVisible(true)
+			}
+
+			setLastScrollY(currentScrollY)
+		}
+
+		window.addEventListener('scroll', handleScroll, { passive: true })
+
+		return () => {
+			window.removeEventListener('scroll', handleScroll)
+		}
+	}, [lastScrollY])
+
 	return (
-		<header className='border-b border-zinc-200 bg-white/80 backdrop-blur'>
+		<header
+			className={`sticky top-0 z-50 border-b border-zinc-200 bg-white/80 backdrop-blur transition-transform duration-300 ${
+				isVisible ? 'translate-y-0' : '-translate-y-full'
+			}`}
+		>
 			<div className='mx-auto flex max-w-7xl items-center justify-between gap-6 px-6 py-4'>
 				<div className='flex items-center gap-2'>
 					<Link href='/' className='flex items-center gap-2'>

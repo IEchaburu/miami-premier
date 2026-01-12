@@ -36,11 +36,11 @@ export interface Neighborhood {
 
 export const heroProperties: HeroProperty[] = [
 	{
-		id: 'modern-waterfront',
-		title: 'MODERN WATERFRONT RESIDENCES',
-		location: 'AVENTURA, FL',
-		description: 'Contemporary living with panoramic bay views',
-		priceFrom: 'From $1.8M',
+		id: 'rivage-bal-harbor',
+		title: 'Rivage Bal Harbor',
+		location: 'Bal Harbor, Miami',
+		description: 'Luxury waterfront condominium in the heart of Bal Harbor',
+		priceFrom: 'from $10,000,000',
 	},
 ]
 
