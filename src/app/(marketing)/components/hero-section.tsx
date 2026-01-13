@@ -15,8 +15,9 @@ function HeroSection () {
 		{
 			title: 'Rivage Bal Harbor',
 			location: 'Bal Harbor, Miami',
-			price: 'from $10,000,000',
+			price: 'from $X',
 			status: 'pre-construction',
+			id: '4',
 		},
 	]
 
@@ -31,7 +32,7 @@ function HeroSection () {
 	}
 
 	return (
-		<section className='relative h-screen w-full overflow-hidden'>
+		<section className='relative h-[calc(100vh-4rem)] w-full overflow-hidden'>
 			{/* Background Image */}
 			<div className='absolute inset-0'>
 				<Image
@@ -48,43 +49,49 @@ function HeroSection () {
 			</div>
 
 			{/* Content Overlay */}
-			<div className='relative z-10 flex h-full flex-col justify-end'>
-				<div className='mx-auto w-full max-w-7xl px-6 pb-12 sm:px-8 sm:pb-16 lg:px-12 lg:pb-20'>
-					<div className='ml-auto max-w-2xl space-y-6 text-white'>
-						{/* Status Badge */}
-						<div className='inline-flex items-center rounded-full bg-white/10 px-4 py-1.5 text-xs font-medium uppercase tracking-wider backdrop-blur-sm sm:px-5 sm:py-2 sm:text-sm'>
-							{currentData.status}
-						</div>
+			<div className='relative z-10 flex h-full flex-col justify-center'>
+				{/* Same container structure as navbar for perfect alignment */}
+				<div className='mx-auto w-full max-w-7xl px-6'>
+					{/* Flex layout matching navbar - content aligns to right edge */}
+					<div className='flex justify-end'>
+						{/* Content - right edge aligns with profile icon right edge */}
+						{/* No width constraints to ensure right edge perfectly aligns */}
+						<div className='w-full space-y-6 text-white sm:w-auto sm:max-w-lg md:max-w-xl lg:max-w-2xl'>
+							{/* Status Badge */}
+							<div className='inline-flex items-center rounded-full bg-white/10 px-4 py-1.5 text-xs font-medium uppercase tracking-wider backdrop-blur-sm sm:px-5 sm:py-2 sm:text-sm'>
+								{currentData.status}
+							</div>
 
-						{/* Title */}
-						<h1 className='text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl'>
-							{currentData.title}
-						</h1>
+							{/* Title */}
+							<h1 className='text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl'>
+								{currentData.title}
+							</h1>
 
-						{/* Location */}
-						<p className='text-lg font-medium uppercase tracking-wider text-white/90 sm:text-xl md:text-2xl'>
-							{currentData.location}
-						</p>
+							{/* Location */}
+							<p className='text-lg font-medium uppercase tracking-wider text-white/90 sm:text-xl md:text-2xl'>
+								{currentData.location}
+							</p>
 
-						{/* Price */}
-						<p className='text-2xl font-semibold sm:text-3xl md:text-4xl lg:text-5xl'>
-							{currentData.price}
-						</p>
+							{/* Price */}
+							<p className='text-2xl font-semibold sm:text-3xl md:text-4xl lg:text-5xl'>
+								{currentData.price}
+							</p>
 
-						{/* CTA Buttons */}
-						<div className='flex flex-wrap items-center gap-4 pt-4'>
-							<Link
-								href={`/developments`}
-								className='inline-flex items-center justify-center rounded-lg bg-white px-6 py-3 text-sm font-semibold text-zinc-900 transition hover:bg-zinc-100 sm:px-8 sm:py-3.5 sm:text-base'
-							>
-								More Details
-							</Link>
-							<button
-								type='button'
-								className='inline-flex items-center justify-center rounded-lg border-2 border-white bg-transparent px-6 py-3 text-sm font-semibold text-white transition hover:bg-white/10 sm:px-8 sm:py-3.5 sm:text-base'
-							>
-								Schedule Viewing
-							</button>
+							{/* CTA Buttons */}
+							<div className='flex flex-wrap items-center gap-4 pt-4'>
+								<Link
+									href={`/developments/${currentData.id}`}
+									className='inline-flex items-center justify-center rounded-lg bg-white px-6 py-3 text-sm font-semibold text-zinc-900 transition hover:bg-zinc-100 sm:px-8 sm:py-3.5 sm:text-base'
+								>
+									More Details
+								</Link>
+								<button
+									type='button'
+									className='inline-flex items-center justify-center rounded-lg border-2 border-white bg-transparent px-6 py-3 text-sm font-semibold text-white transition hover:bg-white/10 sm:px-8 sm:py-3.5 sm:text-base'
+								>
+									Schedule Viewing
+								</button>
+							</div>
 						</div>
 					</div>
 				</div>

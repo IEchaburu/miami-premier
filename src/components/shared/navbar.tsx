@@ -65,12 +65,86 @@ function Navbar ({ isAuthenticated }: NavbarProps) {
 				</div>
 
 				<nav className='hidden items-center gap-6 text-sm font-medium text-zinc-700 md:flex'>
-					<Link href='/developments' className='hover:text-zinc-900'>
-						Developments
-					</Link>
-					<Link href='/neighborhoods' className='hover:text-zinc-900'>
-						Neighborhoods
-					</Link>
+					{/* Developments Dropdown */}
+					<div className='group relative'>
+						<Link
+							href='/developments'
+							className='transition hover:text-zinc-900 group-hover:underline'
+						>
+							Developments
+						</Link>
+						{/* Dropdown Menu */}
+						<div className='invisible absolute left-0 top-full mt-3 w-auto min-w-fit whitespace-nowrap rounded-md bg-white py-3 shadow-xl opacity-0 transition-all duration-300 group-hover:visible group-hover:opacity-100'>
+							<Link
+								href='/developments'
+								className='block px-6 py-2.5 text-sm font-normal text-zinc-700 transition hover:underline hover:text-zinc-900'
+							>
+								All Featured Developments
+							</Link>
+							<Link
+								href='/developments?sort=latest'
+								className='block px-6 py-2.5 text-sm font-normal text-zinc-700 transition hover:underline hover:text-zinc-900'
+							>
+								Latest
+							</Link>
+							<Link
+								href='/developments?sort=location'
+								className='block px-6 py-2.5 text-sm font-normal text-zinc-700 transition hover:underline hover:text-zinc-900'
+							>
+								Best Located
+							</Link>
+							<Link
+								href='/developments?sort=luxury'
+								className='block px-6 py-2.5 text-sm font-normal text-zinc-700 transition hover:underline hover:text-zinc-900'
+							>
+								Most Luxurious
+							</Link>
+						</div>
+					</div>
+
+					{/* Neighborhoods Dropdown */}
+					<div className='group relative'>
+						<Link
+							href='/neighborhoods'
+							className='transition hover:text-zinc-900 group-hover:underline'
+						>
+							Neighborhoods
+						</Link>
+						{/* Dropdown Menu */}
+						<div className='invisible absolute left-0 top-full mt-3 w-auto min-w-fit whitespace-nowrap rounded-md bg-white py-3 shadow-xl opacity-0 transition-all duration-300 group-hover:visible group-hover:opacity-100'>
+							<Link
+								href='/neighborhoods'
+								className='block px-6 py-2.5 text-sm font-normal text-zinc-700 transition hover:underline hover:text-zinc-900'
+							>
+								All Neighborhoods
+							</Link>
+							<Link
+								href='/neighborhoods/bal-harbor'
+								className='block px-6 py-2.5 text-sm font-normal text-zinc-700 transition hover:underline hover:text-zinc-900'
+							>
+								Bal Harbor
+							</Link>
+							<Link
+								href='/neighborhoods/brickell'
+								className='block px-6 py-2.5 text-sm font-normal text-zinc-700 transition hover:underline hover:text-zinc-900'
+							>
+								Brickell
+							</Link>
+							<Link
+								href='/neighborhoods/coconut-grove'
+								className='block px-6 py-2.5 text-sm font-normal text-zinc-700 transition hover:underline hover:text-zinc-900'
+							>
+								Coconut Grove
+							</Link>
+							<Link
+								href='/neighborhoods/edgewater'
+								className='block px-6 py-2.5 text-sm font-normal text-zinc-700 transition hover:underline hover:text-zinc-900'
+							>
+								Edgewater
+							</Link>
+						</div>
+					</div>
+
 					<Link href='/news' className='hover:text-zinc-900'>
 						News
 					</Link>

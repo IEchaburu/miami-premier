@@ -116,7 +116,7 @@ export default async function DevelopmentsPage ({
 				</div>
 
 				{/* Advanced Filters */}
-				<AdvancedFilters propertyTypes={propertyTypes} />
+				{/*<AdvancedFilters propertyTypes={propertyTypes} />*/}
 
 				{/* Filters and Sort */}
 				<Suspense fallback={<div>Loading filters...</div>}>
