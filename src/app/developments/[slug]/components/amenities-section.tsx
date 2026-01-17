@@ -13,10 +13,13 @@ import {
 	Gamepad2,
 	Umbrella,
 	Sparkles,
+	Users,
+	Wine,
+	Palmtree,
 } from 'lucide-react'
+import { getImageUrl } from '@/lib/utils/image-url'
 
 // Fallback icon mapping - only used if database doesn't provide an icon
-// This is a fallback, database icon takes priority
 const AMENITY_ICONS: Record<string, React.ComponentType<{ className?: string }>> = {
 	pool: Waves,
 	pools: Waves,
@@ -36,6 +39,11 @@ const AMENITY_ICONS: Record<string, React.ComponentType<{ className?: string }>>
 	media: Monitor,
 	game: Gamepad2,
 	simulator: Gamepad2,
+	wine: Wine,
+	users: Users,
+	cinema: Users,
+	terrace: Palmtree,
+	garden: Palmtree,
 }
 
 interface AmenitiesSectionProps {
@@ -47,39 +55,36 @@ interface AmenitiesSectionProps {
 			kind: string | null
 		}
 	}>
+	featureImage?: {
+		id: number
+		s3_bucket: string | null
+		s3_key: string | null
+		alt: string | null
+		sort_order: number
+	} | null
 }
 
-export function AmenitiesSection ({ amenities }: AmenitiesSectionProps) {
+export function AmenitiesSection ({ amenities, featureImage }: AmenitiesSectionProps) {
 	if (!amenities || amenities.length === 0) {
 		return null
 	}
 
-	// Helper function to render icon - prioritizes database icon, falls back to name-based matching
+	// Helper function to render icon
 	function renderIcon (icon: string | null, name: string, kind: string | null) {
-		// Priority 1: Use icon from database if provided
 		if (icon) {
-			// If it's an SVG string, render it directly
 			if (icon.startsWith('<svg') || icon.startsWith('data:image/svg')) {
 				return (
 					<div
-						className='h-6 w-6 text-zinc-900'
+						className='h-8 w-8 text-neutral-900'
 						dangerouslySetInnerHTML={{ __html: icon }}
 					/>
 				)
 			}
-			// If it's a URL, use it as an image source
 			if (icon.startsWith('http') || icon.startsWith('/')) {
-				return (
-					<img
-						src={icon}
-						alt={name}
-						className='h-6 w-6 object-contain'
-					/>
-				)
+				return <img src={icon} alt={name} className='h-8 w-8 object-contain' />
 			}
 		}
 
-		// Priority 2: Try to match icon based on kind (from database)
 		if (kind) {
 			const kindLower = kind.toLowerCase()
 			const IconComponent = Object.entries(AMENITY_ICONS).find(([key]) =>
@@ -87,62 +92,79 @@ export function AmenitiesSection ({ amenities }: AmenitiesSectionProps) {
 			)?.[1]
 
 			if (IconComponent) {
-				return <IconComponent className='h-6 w-6 text-zinc-900' />
+				return <IconComponent className='h-8 w-8 text-neutral-900' />
 			}
 		}
 
-		// Priority 3: Try to match icon based on name
 		const nameLower = name.toLowerCase()
 		const IconComponent = Object.entries(AMENITY_ICONS).find(([key]) =>
 			nameLower.includes(key)
 		)?.[1]
 
 		if (IconComponent) {
-			return <IconComponent className='h-6 w-6 text-zinc-900' />
+			return <IconComponent className='h-8 w-8 text-neutral-900' />
 		}
 
-		// Default: Show first letter
 		return (
-			<div className='flex h-6 w-6 items-center justify-center rounded bg-zinc-100 text-xs font-semibold text-zinc-600'>
+			<div className='flex h-8 w-8 items-center justify-center rounded bg-neutral-100 text-xs font-semibold text-neutral-600'>
 				{name.charAt(0).toUpperCase()}
 			</div>
 		)
 	}
 
 	return (
-		<div className='mt-8 border-t border-zinc-200 pt-8 sm:mt-12 sm:pt-12'>
-			<h2 className='mb-6 text-xl font-semibold text-zinc-900 sm:mb-8 sm:text-2xl'>
-				Amenities
-			</h2>
-			<div className='grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-6'>
-				{amenities.map(({ amenities: amenity }) => {
-					return (
-						<div
-							key={amenity.id}
-							className='flex items-start gap-4 rounded-lg border border-zinc-200 bg-white p-4 transition hover:border-zinc-300 hover:shadow-sm sm:p-5'
-						>
-							{/* Icon - from database */}
-							<div className='shrink-0'>
-								{renderIcon(amenity.icon, amenity.name, amenity.kind)}
-							</div>
+		<section className='bg-neutral-50 px-8 py-24 md:px-16 lg:px-24'>
+			<div className='mx-auto max-w-7xl'>
+				<div className='mb-16 text-center'>
+					<h2 className='mb-4 text-4xl font-bold tracking-tight text-neutral-900 md:text-5xl'>
+						World-Class Amenities
+					</h2>
+					<p className='text-lg text-neutral-600'>
+						Every detail curated for an exceptional lifestyle
+					</p>
+				</div>
 
-							{/* Content - from database */}
-							<div className='flex-1'>
-								<h3 className='mb-1 text-base font-semibold text-zinc-900 sm:text-lg'>
-									{amenity.name}
-								</h3>
-								{/* Show kind as description if available */}
-								{amenity.kind && (
-									<p className='text-sm text-zinc-600 sm:text-base'>
-										{amenity.kind}
-									</p>
-								)}
+				<div className='grid gap-8 md:grid-cols-2 lg:grid-cols-4'>
+					{amenities.map(({ amenities: amenity }) => (
+						<div key={amenity.id} className='group'>
+							<div className='mb-4 flex h-16 w-16 items-center justify-center border-2 border-neutral-900 transition group-hover:bg-neutral-900'>
+								<div className='transition group-hover:text-white'>
+									{renderIcon(amenity.icon, amenity.name, amenity.kind)}
+								</div>
+							</div>
+							<h3 className='mb-2 text-xl font-semibold text-neutral-900'>
+								{amenity.name}
+							</h3>
+							{amenity.kind && (
+								<p className='text-neutral-600'>{amenity.kind}</p>
+							)}
+						</div>
+					))}
+				</div>
+
+				{/* Feature Image */}
+				{featureImage && (
+					<div className='mt-20'>
+						<div className='relative h-[500px] overflow-hidden'>
+							<img
+								src={getImageUrl(featureImage)}
+								alt={featureImage.alt || 'Amenities'}
+								className='h-full w-full object-cover'
+								loading='lazy'
+							/>
+							<div className='absolute inset-0 bg-gradient-to-t from-black/40 to-transparent' />
+							<div className='absolute bottom-0 left-0 p-12 text-white'>
+								<h3 className='mb-2 text-3xl font-bold'>Elevated Living Experience</h3>
+								<p className='max-w-2xl text-lg text-white/90'>
+									From sunrise yoga sessions to sunset cocktails by the pool, every moment
+									is designed to inspire.
+								</p>
 							</div>
 						</div>
-					)
-				})}
+					</div>
+				)}
 			</div>
-		</div>
+		</section>
 	)
 }
 

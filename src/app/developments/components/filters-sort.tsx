@@ -41,7 +41,7 @@ export function FiltersSort ({ totalCount, showingCount }: FiltersSortProps) {
 	return (
 		<div className='mb-6 space-y-4'>
 			{/* Filter Buttons */}
-			<div className='flex flex-wrap justify-center gap-2'>
+			{/*<div className='flex flex-wrap justify-center gap-2'>
 				{filterOptions.map(filter => (
 					<button
 						key={filter.id}
@@ -56,7 +56,7 @@ export function FiltersSort ({ totalCount, showingCount }: FiltersSortProps) {
 						{filter.label}
 					</button>
 				))}
-			</div>
+			</div>*/}
 
 			{/* Count and Sort */}
 			<div className='flex items-center justify-between'>

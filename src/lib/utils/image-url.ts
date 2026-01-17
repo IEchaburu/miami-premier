@@ -8,6 +8,11 @@ export function getImageUrl (media: {
 }): string {
 	const url = media.s3_bucket || media.s3_key || ''
 
+	// For local file paths
+	if (url.startsWith('/images/')) {
+		return url
+	}
+	
 	// If it's a Google Drive preview URL, convert to direct image URL
 	if (url.includes('drive.google.com')) {
 		const fileIdMatch = url.match(/\/d\/([a-zA-Z0-9_-]+)/)

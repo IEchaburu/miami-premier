@@ -1,11 +1,13 @@
 import { notFound } from 'next/navigation'
 import { getServerSession } from '@/lib/get-session'
 import { Navbar } from '@/components/shared/navbar'
-import { ImageCarousel } from './components/image-carousel'
-import { ProjectDetails } from './components/project-details'
-import { ContactSection } from './components/contact-section'
-import { AmenitiesSection } from './components/amenities-section'
+import { HeroSection } from './components/hero-section'
+import { DevelopmentInfo } from './components/development-info'
+import { GallerySection } from './components/gallery-section'
 import { FloorPlansSection } from './components/floor-plans-section'
+import { AmenitiesSection } from './components/amenities-section'
+import { LocationSection } from './components/location-section'
+import { ContactSection } from './components/contact-section'
 
 interface PageProps {
 	params: Promise<{ slug: string }>
@@ -49,62 +51,72 @@ export default async function DevelopmentDetailPage ({
 		(media: { kind: string | null }) => media.kind === 'floor_plan'
 	)
 
+	// Get first image for hero, remaining for gallery
+	const heroImage = images.length > 0 ? images[0] : null
+	const galleryImages = images.length > 1 ? images.slice(1) : images
+
+	// Get feature image for amenities (use second image if available)
+	const amenityFeatureImage = images.length > 1 ? images[1] : null
+
+	// Build location string
+	const locationText = [
+		project.areas_barrios?.name,
+		project.markets?.name,
+	]
+		.filter(Boolean)
+		.join(', ')
+
 	return (
 		<div className='min-h-screen bg-white'>
 			<Navbar isAuthenticated={!!session?.user} />
-			<main className='mx-auto w-full max-w-7xl px-4 py-6 sm:px-6 sm:py-8 lg:px-8 lg:py-10'>
-				{/* Two Column Layout - Stacks on mobile/tablet */}
-				<div className='grid w-full grid-cols-1 gap-8 lg:grid-cols-[1.5fr_1fr] lg:gap-12'>
-					{/* Left Column: Image Carousel */}
-					<div className='w-full'>
-						<ImageCarousel images={images} title={project.title} />
-					</div>
 
-					{/* Right Column: Details and Actions */}
-					<div className='w-full space-y-8'>
-						<ProjectDetails
-							project={{
-								...project,
-								id: project.id,
-							}}
-							isAuthenticated={!!session?.user}
-						/>
-						<ContactSection />
-					</div>
-				</div>
+			{/* Hero Section */}
+			{heroImage && (
+				<HeroSection
+					image={heroImage}
+					title={project.title}
+					tagline={project.short_description || null}
+					location={locationText}
+				/>
+			)}
 
-				{/* Full Width Description Section */}
-				{(project.description_md || project.short_description) && (
-					<div className='mt-8 border-t border-zinc-200 pt-8 sm:mt-12 sm:pt-12'>
-						<h2 className='mb-4 text-xl font-semibold text-zinc-900 sm:mb-6 sm:text-2xl'>
-							Description
-						</h2>
-						<div className='prose prose-zinc max-w-none'>
-							{project.description_md ? (
-								<p className='text-base leading-relaxed text-zinc-700 sm:text-lg'>
-									{project.description_md}
-								</p>
-							) : (
-								project.short_description && (
-									<p className='text-base leading-relaxed text-zinc-700 sm:text-lg'>
-										{project.short_description}
-									</p>
-								)
-							)}
-						</div>
-					</div>
-				)}
+			{/* Development Info Section */}
+			<DevelopmentInfo
+				project={{
+					...project,
+					id: project.id,
+				}}
+				isAuthenticated={!!session?.user}
+			/>
 
-				{/* Amenities Section */}
-				{project.project_amenities && project.project_amenities.length > 0 && (
-					<AmenitiesSection amenities={project.project_amenities} />
-				)}
+			{/* Gallery Section */}
+			{galleryImages.length > 0 && (
+				<GallerySection images={galleryImages} title={project.title} />
+			)}
 
-				{/* Floor Plans Section */}
-				{floorPlans.length > 0 && (
-					<FloorPlansSection floorPlans={floorPlans} />
-				)}
-			</main>
+			{/* Floor Plans Section */}
+			{floorPlans.length > 0 && (
+				<FloorPlansSection floorPlans={floorPlans} />
+			)}
+
+			{/* Amenities Section */}
+			{project.project_amenities && project.project_amenities.length > 0 && (
+				<AmenitiesSection
+					amenities={project.project_amenities}
+					featureImage={amenityFeatureImage || null}
+				/>
+			)}
+
+			{/* Location Section */}
+			<LocationSection
+				location={locationText}
+				address={project.address || null}
+				latitude={project.latitude || null}
+				longitude={project.longitude || null}
+			/>
+
+			{/* Contact Section */}
+			<ContactSection developmentName={project.title} />
 		</div>
 	)
 }

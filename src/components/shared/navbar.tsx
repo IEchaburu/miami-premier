@@ -79,7 +79,7 @@ function Navbar ({ isAuthenticated }: NavbarProps) {
 								href='/developments'
 								className='block px-6 py-2.5 text-sm font-normal text-zinc-700 transition hover:underline hover:text-zinc-900'
 							>
-								All Featured Developments
+								All Developments
 							</Link>
 							<Link
 								href='/developments?sort=latest'
